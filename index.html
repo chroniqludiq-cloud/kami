@@ -773,8 +773,11 @@ function setLanguage(lang){
   document.querySelectorAll(".lang-switch button").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
 }
 function languageFromUrl(){
-  const lang=new URLSearchParams(window.location.search).get("lang");
-  return ["en","fr","ja"].includes(lang)?lang:"en";
+  const params=new URLSearchParams(window.location.search);
+  const lang=params.get("lang");
+  if(["en","fr","ja"].includes(lang)) return lang;
+  const match=window.location.hash.match(/^#pourquoi-(en|fr|ja)$/);
+  return match ? match[1] : "en";
 }
 function updateLanguageUrl(lang){
   const url=new URL(window.location.href);
@@ -786,6 +789,9 @@ document.querySelectorAll(".lang-switch button").forEach(b=>b.addEventListener("
   updateLanguageUrl(b.dataset.lang);
 }));
 setLanguage(languageFromUrl());
+if(/^#pourquoi-(en|fr|ja)$/.test(window.location.hash)){
+  requestAnimationFrame(()=>document.getElementById("pourquoi")?.scrollIntoView());
+}
 const _kamiRules=document.getElementById("rules"), _kamiAid=document.getElementById("aid");
 if(_kamiRules)_kamiRules.addEventListener("click",()=>trackDownload("rules"));
 if(_kamiAid)_kamiAid.addEventListener("click",()=>trackDownload("aid"));
